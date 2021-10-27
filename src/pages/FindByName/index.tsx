@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StatusBar,
   KeyboardAvoidingView,
@@ -17,14 +17,32 @@ import {
   Container,
   Content,
   Title, 
-  Introduction, 
+  Introduction,
+  CardContainer,
   Form, 
-  Footer 
+  Footer,
 } from './styles';
+
+interface IAnimalsProps {
+  codigoRastreamento: string,
+  created_at: string,
+  dataNascimento: string,
+  entradaPlantel: string,
+  id: string,
+  localizacao: string,
+  nome: string,
+  pesoCompra: string,
+  raca: string,
+  statusAnimal: string,
+  tipoAnimal: string,
+  updated_at: string,
+}
 
 export function FindByName() {
   const [nome, setNome] = useState('');
-  const [animal, setAnimal] = useState('');
+  const [animal, setAnimal] = useState<IAnimalsProps>({} as IAnimalsProps);
+
+  console.log('useState ', animal);
 
   async function handleFindAnimal() {
     try {
@@ -35,16 +53,11 @@ export function FindByName() {
 
       await schema.validate({ nome });
 
-      console.log(nome)
-
       const response = await api
-      .get('/animals/findname/', {
-        nome
-      });
+      .get(`/animals/findname?nome=${nome}`);
 
-      if (animal) {
+      if (response) {
         setAnimal(response.data);
-        console.log(response.data)
       };
     } catch (error) {
       if (error instanceof Yup.ValidationError) {
@@ -80,19 +93,20 @@ export function FindByName() {
               Encontre um animal por nome:
             </Introduction>
 
-            {/* {animal && (
-              <AnimalsCard 
-                  id={item.id}
-                  nome={item.nome}
-                  dataNascimento={item.dataNascimento}
-                  localizacao={item.localizacao}
-                  raca={item.raca}
-                  tipoAnimal={item.tipoAnimal}
-                  statusAnimal={item.statusAnimal}
-                  pesoCompra={item.pesoCompra}
+            <CardContainer>
+              {animal.id && (
+                <AnimalsCard 
+                  id={animal.id}
+                  nome={animal.nome}
+                  dataNascimento={animal.dataNascimento}
+                  localizacao={animal.localizacao}
+                  raca={animal.raca}
+                  tipoAnimal={animal.tipoAnimal}
+                  statusAnimal={animal.statusAnimal}
+                  pesoCompra={animal.pesoCompra}
                 />
-            )} */}
-
+              )}
+            </CardContainer>
 
 
             <Form>

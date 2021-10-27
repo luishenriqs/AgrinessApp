@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StatusBar,
   KeyboardAvoidingView,
@@ -17,34 +17,46 @@ import {
   Container,
   Content,
   Title, 
-  Introduction, 
+  Introduction,
+  CardContainer,
   Form, 
-  Footer 
+  AnimalsList,
+  Footer,
 } from './styles';
+
+interface IAnimalsProps {
+  codigoRastreamento: string,
+  created_at: string,
+  dataNascimento: string,
+  entradaPlantel: string,
+  id: string,
+  localizacao: string,
+  nome: string,
+  pesoCompra: string,
+  raca: string,
+  statusAnimal: string,
+  tipoAnimal: string,
+  updated_at: string,
+}
 
 export function FindByLocation() {
   const [localization, setLocalization] = useState('');
-  const [animal, setAnimal] = useState('');
+  const [animals, setAnimals] = useState<IAnimalsProps[]>([]);
 
   async function handleFindAnimal() {
     try {
       const schema = Yup.object().shape({
-        nome: Yup.string()
+        localization: Yup.string()
           .required('Localização obrigatória')
       });
 
       await schema.validate({ localization });
 
-      console.log(localization)
-
       const response = await api
-      .get('/animals/findname/', {
-        localization
-      });
+      .get(`/animals/findlocalization?localization=${localization}`);
 
-      if (animal) {
-        setAnimal(response.data);
-        console.log(response.data)
+      if (response) {
+        setAnimals(response.data);
       };
     } catch (error) {
       if (error instanceof Yup.ValidationError) {
@@ -59,62 +71,69 @@ export function FindByLocation() {
 
   return (
     <KeyboardAvoidingView behavior='position' enabled>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <Container>
-          <StatusBar
-            barStyle='dark-content'
-            backgroundColor='transparent'
-            translucent
-          />
-          <Header
-            title='ENCONTRE UM ANIMAL'
-            text='Procure por localização'
-            headerSize={'small'}
-            logout={false}
-          />
-          <Content>
-            <Title>
-              AGRINESS
-            </Title>
-            <Introduction>
-              Encontre um animal por sua localização:
-            </Introduction>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <Container>
+        <StatusBar
+          barStyle='dark-content'
+          backgroundColor='transparent'
+          translucent
+        />
+        <Header
+          title='ENCONTRE UM ANIMAL'
+          text='Procure por localização'
+          headerSize={'small'}
+          logout={false}
+        />
+        <Content>
+          <Title>
+            AGRINESS
+          </Title>
+          <Introduction>
+            Encontre pela localização:
+          </Introduction>
 
-            {/* {animal && (
-              <AnimalsCard 
-                  id={item.id}
-                  nome={item.nome}
-                  dataNascimento={item.dataNascimento}
-                  localizacao={item.localizacao}
-                  raca={item.raca}
-                  tipoAnimal={item.tipoAnimal}
-                  statusAnimal={item.statusAnimal}
-                  pesoCompra={item.pesoCompra}
-                />
-            )} */}
-
-
-
-            <Form>
-              <Input
-                iconName='user'
-                placeholder='Localização do animal'
-                value={localization}
-                onChangeText={setLocalization}
+          <CardContainer>
+            {animals && (
+              <AnimalsList
+                data={animals}
+                keyExtractor={item => item.nome}
+                renderItem={({ item, index }) => (
+                  <AnimalsCard 
+                    id={item.id}
+                    nome={item.nome}
+                    dataNascimento={item.dataNascimento}
+                    localizacao={item.localizacao}
+                    raca={item.raca}
+                    tipoAnimal={item.tipoAnimal}
+                    statusAnimal={item.statusAnimal}
+                    pesoCompra={item.pesoCompra}
+                  />
+                )}
               />
-            </Form>
+            )}
+          </CardContainer>
 
-            <Footer>
-              <Button
-                title='Buscar'
-                enabled={true}
-                loading={false}
-                onPress={handleFindAnimal}
-              />
-            </Footer>
-          </Content>
-        </Container>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+
+          <Form>
+            <Input
+              iconName='user'
+              placeholder='Localização do animal'
+              value={localization}
+              onChangeText={setLocalization}
+            />
+          </Form>
+
+          <Footer>
+            <Button
+              title='Buscar'
+              enabled={true}
+              loading={false}
+              onPress={handleFindAnimal}
+            />
+          </Footer>
+        </Content>
+      </Container>
+    </TouchableWithoutFeedback>
+  </KeyboardAvoidingView>
   );
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Alert } from 'react-native';
 import {
     Container,
     Content,
@@ -31,6 +32,10 @@ export function AnimalsCard({
     pesoCompra,
 }: IAnimalsProps) {
 
+    function handlePress() {
+        Alert.alert('Função indisponível no momento')
+    }
+
     return (
         <Container>
             <Content>
@@ -45,11 +50,13 @@ export function AnimalsCard({
                     <LeftButton
                         title='Update'
                         color='#03b252'
+                        onPress={handlePress}
                     >
                     </LeftButton>
                     <RigthButton
                         title='Deletar'
                         color='#e83f5b'
+                        onPress={handlePress}
                     >
                     </RigthButton>
                 </ButtonContainer>
