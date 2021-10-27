@@ -3,6 +3,7 @@ export default {
       header: '#1b1b1f',
   
       background_primary: '#f4f5f6',
+      background_primary_rgb: 'rgba(244, 245, 246, 0.7)',
       background_secondary: '#ffffff',
   
       text: '#7a7a90',
@@ -13,6 +14,8 @@ export default {
   
       main: '#347AE3',
       main_light: '#fdedef',
+
+      gold: '#ffD700',
   
       success: '#03b252',
       attention: '#e83f5b',
